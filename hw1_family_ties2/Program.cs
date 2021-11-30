@@ -14,7 +14,7 @@ namespace hw1_family_ties2
 
             Person Vera = new Person("Vera", Gender.Female);
             Person Andrey = new Person("Andrey", Gender.Male);            
-            Andrey.SetPartner(Vera);
+            Vera.SetPartner(Andrey);
 
             Person Katya = new Person("Katya", Gender.Female, Natasha, Gleb);
             Person Pasha = new Person("Pasha", Gender.Male, Andrey, Vera, Katya);
@@ -22,26 +22,35 @@ namespace hw1_family_ties2
             Person Egor = new Person("Egor", Gender.Female, Katya, Pasha);
 
             Person Nastia = new Person("Nastia", Gender.Female, Andrey, Vera);
-            Person Sasha = new Person("Sasha", Gender.Male);
-            Sasha.SetPartner(Nastia);
+            Person Sasha = new Person("Sasha", Gender.Male, Andrey, Vera);
+            
 
+            Person Roman = new Person("Roman", Gender.Male);
+            Roman.SetPartner(Nastia);
+            Person Misha = new Person("Misha", Gender.Male, Roman, Nastia);
+            
+            
             Console.WriteLine("Person:" + Egor.GetName());
+            Console.WriteLine("Родители:");
             Egor.PrintParents();
             Console.WriteLine('\n');
 
             Console.WriteLine("Person:" + Natasha.GetName());
+            Console.WriteLine("Родители:");
             Natasha.PrintParents();
             Console.WriteLine('\n');
 
             Console.WriteLine("Person:" + Egor.GetName());
+            Console.WriteLine("Дяди и тёти:");
             foreach (Person person in Egor.GetUncles())
             {
-                Console.WriteLine(person.GetName());
+                 Console.WriteLine(person.GetName());
             }
 
             Console.WriteLine('\n');
 
             Console.WriteLine("Person:" + Egor.GetName());
+            Console.WriteLine("Сёстры и братья:");
             foreach (Person person in Egor.GetCousins())
             {
                 Console.WriteLine(person.GetName());
@@ -49,16 +58,18 @@ namespace hw1_family_ties2
             Console.WriteLine('\n');
 
             Console.WriteLine("Person:" + Pasha.GetName());
-            foreach (Person person in Pasha.GetInLavs())
+            Console.WriteLine("Родня со стороны мужа жены:");
+            foreach (Person person in Pasha.GetInLaws())
             {
+               
                 Console.WriteLine(person.GetName());
             }
 
-            Person Oleg = new Person("Oleg", Gender.Male);
-            Oleg.GetCousins();
-            Oleg.GetParents();
-            Oleg.GetUncles();
-            Oleg.GetInLavs();
+            Person Roma = new Person("Roman", Gender.Male);
+            Roma.GetCousins();
+            Roma.GetParents();
+            Roma.GetUncles();
+            Roma.GetInLaws();
 
             Person Alex = new Person("Alex", Gender.Male);
 
@@ -253,7 +264,7 @@ namespace hw1_family_ties2
             return listCousins;
         }
 
-        public Person[] GetInLavs()
+        public Person[] GetInLaws()
         {
             if (this.Partner == null)
                 return new Person[2];
