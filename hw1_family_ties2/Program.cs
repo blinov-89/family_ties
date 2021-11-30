@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -64,27 +64,6 @@ namespace hw1_family_ties2
                
                 Console.WriteLine(person.GetName());
             }
-
-            Person Roma = new Person("Roman", Gender.Male);
-            Roma.GetCousins();
-            Roma.GetParents();
-            Roma.GetUncles();
-            Roma.GetInLaws();
-
-            Person Alex = new Person("Alex", Gender.Male);
-
-            Person Serg = new Person("Serg", Gender.Male);
-            Person Klava = new Person("Klava", Gender.Female);
-
-            Alex.SetChildren(Serg);
-            Alex.SetChildren(Klava);
-
-            Person Valera = new Person("Valera", Gender.Male);
-            Person Olga = new Person("Olga", Gender.Female);
-            Olga.SetPartner(Valera);
-            Serg.SetChildren(Valera);
-
-            Alex.SetParents(Valera, Olga);
 
         }
     }
