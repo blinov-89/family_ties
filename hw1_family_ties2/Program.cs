@@ -13,7 +13,7 @@ namespace hw1_family_ties2
             Natasha.SetPartner(Gleb);
 
             Person Vera = new Person("Vera", Gender.Female);
-            Person Andrey = new Person("Andrey", Gender.Male);            
+            Person Andrey = new Person("Andrey", Gender.Male);
             Vera.SetPartner(Andrey);
 
             Person Katya = new Person("Katya", Gender.Female, Natasha, Gleb);
@@ -23,13 +23,11 @@ namespace hw1_family_ties2
 
             Person Nastia = new Person("Nastia", Gender.Female, Andrey, Vera);
             Person Sasha = new Person("Sasha", Gender.Male, Andrey, Vera);
-            
 
             Person Roman = new Person("Roman", Gender.Male);
             Roman.SetPartner(Nastia);
-            Person Misha = new Person("Misha", Gender.Male, Roman, Nastia);
-            
-            
+            Person Misha = new Person("Misha", Gender.Male, Roman, Nastia);            
+
             Console.WriteLine("Person:" + Egor.GetName());
             Console.WriteLine("Родители:");
             Egor.PrintParents();
@@ -44,7 +42,7 @@ namespace hw1_family_ties2
             Console.WriteLine("Дяди и тёти:");
             foreach (Person person in Egor.GetUncles())
             {
-                 Console.WriteLine(person.GetName());
+                Console.WriteLine(person.GetName());
             }
 
             Console.WriteLine('\n');
@@ -61,7 +59,6 @@ namespace hw1_family_ties2
             Console.WriteLine("Родня со стороны мужа жены:");
             foreach (Person person in Pasha.GetInLaws())
             {
-               
                 Console.WriteLine(person.GetName());
             }
 
@@ -73,7 +70,8 @@ namespace hw1_family_ties2
         Female,
         Male
     }
-    class Person 
+
+    class Person
     {
         private string Name;
         private Gender Gender;
@@ -110,15 +108,26 @@ namespace hw1_family_ties2
             {
                 if (this != parent_1 && this != parent_2 && parent_1 != parent_2 && parent_1.Partner == parent_2 && parent_2.Partner == parent_1)
                 {
-                    var list = GetDownTree(this.Childrens);
+                    var list = GetUpTree(this.Parents);
                     if (!list.Contains(parent_1) && !list.Contains(parent_2))
                     {
                         this.Parents[0] = parent_1;
                         this.Parents[1] = parent_2;
                         parent_1.SetChildren(this);
+                        parent_2.SetChildren(this);
                     }
                 }
             }
+        }
+
+        public void SetSingleParent(Person parent)
+        {
+            if (this.Parents[0] == null || this.Parents[1] == null)
+                if (this != parent && !GetUpTree(this.Parents).Contains(parent))
+                {
+                    if (this.Parents[0] == null) this.Parents[0] = parent;
+                    else if (this.Parents[1] == null) this.Parents[1] = parent;
+                }
         }
 
         public HashSet<Person> GetDownTree(HashSet<Person> childrens)
@@ -138,14 +147,16 @@ namespace hw1_family_ties2
         {
             if (this != children && this.Parents[0] != children && this.Parents[1] != children)
             {
-                var list = GetUpTree(this.Parents);
+                var list = GetDownTree(this.Childrens);
                 if (!list.Contains(children))
                 {
                     this.Childrens.Add(children);
                     if (this.Partner != null)
                     {
                         this.Partner.Childrens.Add(children);
+                        children.SetParents(this, this.Partner);
                     }
+                    else children.SetSingleParent(this);
                 }
             }
         }
@@ -196,7 +207,7 @@ namespace hw1_family_ties2
         public HashSet<Person> GetChildrens()
         {
             HashSet<Person> listchildrens = this.Childrens;
-            return listchildrens;
+            return new HashSet<Person>(listchildrens);
         }
 
         public HashSet<Person> GetUncles()
@@ -225,21 +236,12 @@ namespace hw1_family_ties2
         public HashSet<Person> GetCousins()
         {
             HashSet<Person> listCousins = new HashSet<Person>();
-            foreach (Person parent in this.Parents)
-            {
-                if (parent == null) continue;
-                foreach (Person ancestor in parent.Parents)
-                {
-                    if (ancestor == null) continue;
-                    foreach (Person uncle in ancestor.Childrens)
-                    {
-                        if (uncle == null) continue;
-                        listCousins.UnionWith(uncle.Childrens);
-                    }
+            HashSet<Person> uncles = this.GetUncles();
 
-                }
-            }
-            listCousins.Remove(this);
+            foreach (Person uncle in uncles)
+                foreach (Person child in uncle.Childrens)
+                    if (!listCousins.Contains(child)) listCousins.Add(child);
+
             return listCousins;
         }
 
