@@ -61,6 +61,15 @@ namespace hw1_family_ties2
             {
                 Console.WriteLine(person.GetName());
             }
+            Console.WriteLine('\n');
+            
+            
+            var person1 = new Person("Person1", Gender.Male);
+            var person2 = new Person("Person2", Gender.Female);
+            person1.SetChildren(person2);
+            
+            person2.PrintParents();
+
 
         }
     }
@@ -258,18 +267,21 @@ namespace hw1_family_ties2
             {
                 foreach (Person parent in this.Parents)
                 {
-                    switch (parent.Gender)
+                    if (parent != null)
                     {
-                        case Gender.Female:
-                            Console.WriteLine("Mather: " + parent.Name);
-                            break;
-                        case Gender.Male:
-                            Console.WriteLine("Father: " + parent.Name);
-                            break;
-                        default:
-                            break;
+                        switch (parent.Gender)
+                        {
+                            case Gender.Female:
+                                Console.WriteLine("Mather: " + parent.Name);
+                                break;
+                            case Gender.Male:
+                                Console.WriteLine("Father: " + parent.Name);
+                                break;
+                            default:
+                                break;
+                        }
                     }
-                }
+                }    
             }
             else { Console.WriteLine("No Parents"); }
         }
