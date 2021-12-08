@@ -210,7 +210,7 @@ namespace hw1_family_ties2
             Person[] parents = new Person[2];
             parents[0] = this.Parents[0];
             parents[1] = this.Parents[1];
-            return parents;
+            return parents.Where(x=> x != null).ToArray();
         }
 
         public HashSet<Person> GetChildrens()
@@ -263,27 +263,19 @@ namespace hw1_family_ties2
 
         public void PrintParents()
         {
-            if (this.Parents[0] != null || this.Parents[1] != null)
+            var parents = GetParents();
+            if (parents.Length == 0)
             {
-                foreach (Person parent in this.Parents)
-                {
-                    if (parent != null)
-                    {
-                        switch (parent.Gender)
-                        {
-                            case Gender.Female:
-                                Console.WriteLine("Mather: " + parent.Name);
-                                break;
-                            case Gender.Male:
-                                Console.WriteLine("Father: " + parent.Name);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }    
+                Console.WriteLine("No Parents");
+                return;
             }
-            else { Console.WriteLine("No Parents"); }
+            
+            foreach (var p in parents)
+            {
+                string status = p.Gender == Gender.Male ? "Father" : "Mather";
+                Console.WriteLine(status + ": " + p.Name);
+            }
+
         }
     }
 }
