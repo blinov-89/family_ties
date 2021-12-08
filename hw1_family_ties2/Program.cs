@@ -65,10 +65,13 @@ namespace hw1_family_ties2
             
             
             var person1 = new Person("Person1", Gender.Male);
-            var person2 = new Person("Person2", Gender.Female);
+            var person2 = new Person("Person2", Gender.Male);
+            var person3 = new Person("Person3", Gender.Male);
             person1.SetChildren(person2);
+            person2.SetSingleParent(person3);
             
-            person2.PrintParents();
+
+            
 
 
         }
@@ -172,20 +175,19 @@ namespace hw1_family_ties2
 
         public HashSet<Person> GetUpTree(Person[] parents)
         {
+            if (parents.Length == 0) return new HashSet<Person>();
             HashSet<Person> listPerson = new HashSet<Person>();
-            if (parents[0] != null || parents[1] != null)
-            {
-                listPerson.UnionWith(GetUpTree(parents[0].GetParents()));
-                listPerson.UnionWith(GetUpTree(parents[1].GetParents()));
-            }
             if (parents[0] != null)
             {
+                listPerson.UnionWith(GetUpTree(parents[0].GetParents()));
                 listPerson.Add(parents[0]);
             }
             if (parents[1] != null)
             {
+                listPerson.UnionWith(GetUpTree(parents[0].GetParents()));
                 listPerson.Add(parents[1]);
             }
+
             return listPerson;
         }
 
