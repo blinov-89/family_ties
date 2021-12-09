@@ -26,7 +26,7 @@ namespace hw1_family_ties2
 
             Person Roman = new Person("Roman", Gender.Male);
             Roman.SetPartner(Nastia);
-            Person Misha = new Person("Misha", Gender.Male, Roman, Nastia);            
+            Person Misha = new Person("Misha", Gender.Male, Roman, Nastia);
 
             Console.WriteLine("Person:" + Egor.GetName());
             Console.WriteLine("Родители:");
@@ -61,19 +61,16 @@ namespace hw1_family_ties2
             {
                 Console.WriteLine(person.GetName());
             }
-            Console.WriteLine('\n');
-            
-            
-            var person1 = new Person("Person1", Gender.Male);
-            var person2 = new Person("Person2", Gender.Male);
-            var person3 = new Person("Person3", Gender.Male);
+
+            var person1 = new Person("Person 1", Gender.Male);
+            var person2 = new Person("Person 2", Gender.Female);
+            var person3 = new Person("Person 3", Gender.Female);
+            var person4 = new Person("Person 4", Gender.Male);
             person1.SetChildren(person2);
-            person2.SetSingleParent(person3);
-            
-
-            
-
-
+            person2.SetChildren(person3);
+            person3.SetChildren(person1);
+            person1.SetSingleParent(person4);
+            person1.PrintParents();
         }
     }
 
@@ -120,8 +117,9 @@ namespace hw1_family_ties2
             {
                 if (this != parent_1 && this != parent_2 && parent_1 != parent_2 && parent_1.Partner == parent_2 && parent_2.Partner == parent_1)
                 {
-                    var list = GetUpTree(this.Parents);
-                    if (!list.Contains(parent_1) && !list.Contains(parent_2))
+                    var existParents = GetUpTree(this.Parents);
+                    var existChilds = GetDownTree(this.Childrens);
+                    if (!existParents.Contains(parent_1) && !existParents.Contains(parent_2) && !existChilds.Contains(parent_1) && !existChilds.Contains(parent_2))
                     {
                         this.Parents[0] = parent_1;
                         this.Parents[1] = parent_2;
@@ -134,16 +132,23 @@ namespace hw1_family_ties2
 
         public void SetSingleParent(Person parent)
         {
+            if (this == parent) return;
             if (this.Parents[0] == null || this.Parents[1] == null)
-                if (this != parent && !GetUpTree(this.Parents).Contains(parent))
+            {
+                var existParents = GetUpTree(this.Parents);
+                var existChilds = GetDownTree(this.Childrens);
+                if (!existParents.Contains(parent) && !existChilds.Contains(parent))
                 {
                     if (this.Parents[0] == null) this.Parents[0] = parent;
                     else if (this.Parents[1] == null) this.Parents[1] = parent;
                 }
+            }
         }
 
         public HashSet<Person> GetDownTree(HashSet<Person> childrens)
         {
+            if (childrens.Count == 0) return new HashSet<Person>();
+
             HashSet<Person> listchildrens = new HashSet<Person>();
             foreach (var obj in childrens)
             {
@@ -159,8 +164,9 @@ namespace hw1_family_ties2
         {
             if (this != children && this.Parents[0] != children && this.Parents[1] != children)
             {
-                var list = GetDownTree(this.Childrens);
-                if (!list.Contains(children))
+                var existChilds = GetDownTree(this.Childrens);
+                var existParents = GetUpTree(this.Parents);
+                if (!existChilds.Contains(children) && !existParents.Contains(children))
                 {
                     this.Childrens.Add(children);
                     if (this.Partner != null)
@@ -176,15 +182,17 @@ namespace hw1_family_ties2
         public HashSet<Person> GetUpTree(Person[] parents)
         {
             if (parents.Length == 0) return new HashSet<Person>();
+
             HashSet<Person> listPerson = new HashSet<Person>();
             if (parents[0] != null)
             {
                 listPerson.UnionWith(GetUpTree(parents[0].GetParents()));
                 listPerson.Add(parents[0]);
             }
-            if (parents[1] != null)
+
+            if (parents.Length > 1 && parents[1] != null)
             {
-                listPerson.UnionWith(GetUpTree(parents[0].GetParents()));
+                listPerson.UnionWith(GetUpTree(parents[1].GetParents()));
                 listPerson.Add(parents[1]);
             }
 
@@ -212,7 +220,7 @@ namespace hw1_family_ties2
             Person[] parents = new Person[2];
             parents[0] = this.Parents[0];
             parents[1] = this.Parents[1];
-            return parents.Where(x=> x != null).ToArray();
+            return parents.Where(x => x != null).ToArray();
         }
 
         public HashSet<Person> GetChildrens()
@@ -271,13 +279,12 @@ namespace hw1_family_ties2
                 Console.WriteLine("No Parents");
                 return;
             }
-            
+
             foreach (var p in parents)
             {
-                string status = p.Gender == Gender.Male ? "Father" : "Mather";
+                string status = p.Gender == Gender.Male ? "Father" : "Mother";
                 Console.WriteLine(status + ": " + p.Name);
             }
-
         }
     }
 }
